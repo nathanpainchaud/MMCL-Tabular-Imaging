@@ -55,7 +55,7 @@ def run(args: DictConfig):
     else:
       wandb_logger = WandbLogger(project=args.wandb_project, entity=args.wandb_entity, save_dir=base_dir, offline=args.offline)
   else:
-    wandb_logger = WandbLogger(project='Test', entity='', save_dir=base_dir, offline=args.offline)
+    wandb_logger = WandbLogger(project='Test', entity='', save_dir=base_dir, offline=True)
   args.wandb_id = wandb_logger.version
 
   if args.checkpoint and not args.resume_training:
