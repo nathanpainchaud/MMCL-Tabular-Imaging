@@ -18,7 +18,7 @@ from trainers.generate_embeddings import generate_embeddings
 from utils.utils import grab_arg_from_checkpoint, prepend_paths, re_prepend_paths
 
 torch.multiprocessing.set_sharing_strategy('file_system')
-torch.backends.cudnn.determinstic = True
+torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
 #@hydra.main(config_path='./configs', config_name='config', version_base=None)
