@@ -34,12 +34,12 @@ def generate_embeddings(hparams):
   train_loader = DataLoader(
     train_dataset,
     num_workers=hparams.num_workers, batch_size=hparams.batch_size,  
-    pin_memory=True, shuffle=False, persistent_workers=True)
+    pin_memory=True, shuffle=False, persistent_workers=bool(hparams.num_workers))
 
   val_loader = DataLoader(
     val_dataset,
     num_workers=hparams.num_workers, batch_size=hparams.batch_size,  
-    pin_memory=True, shuffle=False, persistent_workers=True)
+    pin_memory=True, shuffle=False, persistent_workers=bool(hparams.num_workers))
 
   model.eval()
 

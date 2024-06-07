@@ -96,12 +96,12 @@ def pretrain(hparams, wandb_logger):
   train_loader = DataLoader(
     train_dataset,
     num_workers=hparams.num_workers, batch_size=hparams.batch_size,  
-    pin_memory=True, shuffle=True, persistent_workers=True)
+    pin_memory=True, shuffle=True, persistent_workers=bool(hparams.num_workers))
 
   val_loader = DataLoader(
     val_dataset,
     num_workers=hparams.num_workers, batch_size=hparams.batch_size,  
-    pin_memory=True, shuffle=False, persistent_workers=True)
+    pin_memory=True, shuffle=False, persistent_workers=bool(hparams.num_workers))
 
   # Create logdir based on WandB run name
   logdir = create_logdir(hparams.datatype, hparams.resume_training, wandb_logger)
