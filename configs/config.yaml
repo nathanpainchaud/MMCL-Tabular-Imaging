@@ -23,7 +23,7 @@ lr_finder_lrs:
 multitarget:
 
 wandb_entity: 
-data_base: 
+data_base: ???
 num_workers: 48
 
 wandb_project: 
@@ -92,7 +92,7 @@ vec2vec: False
 checkpoint_vec2vec: 
 
 checkpoint:
-datatype:
+datatype: ???
 eval_datatype:
 
 # General
