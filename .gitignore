@@ -2,3 +2,9 @@ __pycache__
 wandb
 runs
 outputs
+
+# Configuration
+.env
+
+# IDEs
+.idea

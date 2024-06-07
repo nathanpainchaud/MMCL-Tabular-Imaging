@@ -4,6 +4,7 @@ import time
 import random
 from multiprocessing import Queue
 
+from dotenv import load_dotenv
 import hydra
 from omegaconf import DictConfig, open_dict, OmegaConf
 import torch
@@ -85,5 +86,9 @@ def control(args: DictConfig):
   run(args)
 
 if __name__ == "__main__":
+  # Load environment variables from `.env` file if it exists
+  # Load before hydra main to allow for setting environment variables with ${oc.env:ENV_NAME}
+  load_dotenv()
+
   control()
 
