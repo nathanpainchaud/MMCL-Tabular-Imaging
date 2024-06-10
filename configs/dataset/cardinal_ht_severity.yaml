@@ -1,0 +1,50 @@
+# @package _global_
+defaults:
+ - _self_
+
+target: cardinal
+task: classification
+
+num_classes: 3
+batch_size: 256
+weights:
+live_loading: False
+delete_segmentation: False
+balanced_accuracy: False
+eval_metric: acc
+multi_channel_imaging: True
+#data_orig:
+#low_data_splits: ['']
+
+tabular_fields: tabular
+
+labels_train: train_ht_severity.pt
+labels_val: val_ht_severity.pt
+
+data_train_imaging: train_images.pt
+data_val_imaging: val_images.pt
+
+data_train_tabular: train_${tabular_fields}_laaf.csv
+data_val_tabular: val_${tabular_fields}_laaf.csv
+
+field_lengths_tabular: ${tabular_fields}_laaf_field_lengths.pt
+
+
+data_train_eval_tabular: ${data_train_tabular}
+labels_train_eval_tabular: ${labels_train}
+
+data_val_eval_tabular: ${data_val_tabular}
+labels_val_eval_tabular: ${labels_val}
+
+data_test_eval_tabular: test_${tabular_fields}_laaf.csv
+labels_test_eval_tabular: test_ht_severity.pt
+
+
+data_train_eval_imaging: ${data_train_imaging}
+labels_train_eval_imaging: ${labels_train}
+
+data_val_eval_imaging: ${data_val_imaging}
+labels_val_eval_imaging: ${labels_val}
+
+data_test_eval_imaging: test_images.pt
+labels_test_eval_imaging: test_ht_severity.pt
