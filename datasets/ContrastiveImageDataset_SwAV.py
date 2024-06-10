@@ -11,7 +11,7 @@ class ContrastiveImageDataset_SwAV(Dataset):
   Dataset of images that serves two views of a subjects image and their label.
   Can delete first channel (segmentation channel) if specified
   """
-  def __init__(self, data: str, labels: str, transform: transforms.Compose, mini_transform: transforms.Compose, delete_segmentation: bool, img_size: int, live_loading: bool) -> None:
+  def __init__(self, data: str, labels: str, transform: transforms.Compose, mini_transform: transforms.Compose, delete_segmentation: bool, img_size: int, live_loading: bool, multi_channel: bool = False) -> None:
     """
     data:                 Path to torch file containing images
     labels:               Path to torch file containing labels
@@ -24,9 +24,10 @@ class ContrastiveImageDataset_SwAV(Dataset):
     self.transform = transform
     self.mini_transform = mini_transform
     self.live_loading = live_loading
+    self.multi_channel = multi_channel
     if delete_segmentation:
       for im in self.data:
-        im[0,:,:] = 0
+        im[0,...] = 0
 
     self.default_transform = transforms.Compose([
       transforms.Resize(size=(img_size,img_size)),

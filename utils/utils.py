@@ -39,7 +39,7 @@ def seed_everything(hparams):
 
   hparams.seed = pl.seed_everything(seed=hparams.seed)
 
-def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float = 0.08) -> transforms.Compose:
+def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float = 0.08, multi_channel: bool = False) -> transforms.Compose:
   """
   Defines augmentations to be used with images during contrastive training and creates Compose.
   """
@@ -54,29 +54,35 @@ def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float
       transforms.Lambda(lambda x : x.float())
     ])
   else:
-    transform = transforms.Compose([
+    augmentation = [
       transforms.RandomHorizontalFlip(),
       transforms.RandomRotation(45),
       transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
       transforms.RandomResizedCrop(size=img_size, scale=(0.2,1)),
       transforms.Lambda(lambda x: x.float())
-    ])
+    ]
+    if multi_channel:
+      del augmentation[2]   # Remove `ColorJitter` augmentation when using multi-channel images
+    transform = transforms.Compose(augmentation)
   return transform
 
-def grab_soft_eval_image_augmentations(img_size: int) -> transforms.Compose:
+def grab_soft_eval_image_augmentations(img_size: int, multi_channel: bool = False) -> transforms.Compose:
   """
   Defines augmentations to be used during evaluation of contrastive encoders. Typically a less sever form of contrastive augmentations.
   """
-  transform = transforms.Compose([
+  augmentation = [
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(20),
     transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.25),
     transforms.RandomResizedCrop(size=img_size, scale=(0.8,1)),
     transforms.Lambda(lambda x: x.float())
-  ])
+  ]
+  if multi_channel:
+    del augmentation[2]   # Remove `ColorJitter` augmentation when using multi-channel images
+  transform = transforms.Compose(augmentation)
   return transform
 
-def grab_hard_eval_image_augmentations(img_size: int, target: str) -> transforms.Compose:
+def grab_hard_eval_image_augmentations(img_size: int, target: str, multi_channel: bool = False) -> transforms.Compose:
   """
   Defines augmentations to be used during evaluation of contrastive encoders. Typically a less sever form of contrastive augmentations.
   """
@@ -91,13 +97,16 @@ def grab_hard_eval_image_augmentations(img_size: int, target: str) -> transforms
       transforms.Lambda(lambda x : x.float())
     ])
   else:
-    transform = transforms.Compose([
+    augmentation = [
       transforms.RandomHorizontalFlip(),
       transforms.RandomRotation(45),
       transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
       transforms.RandomResizedCrop(size=img_size, scale=(0.6,1)),
       transforms.Lambda(lambda x: x.float())
-    ])
+    ]
+    if multi_channel:
+      del augmentation[2]   # Remove `ColorJitter` augmentation when using multi-channel images
+    transform = transforms.Compose(augmentation)
   return transform
 
 def grab_wids(category: str):

@@ -12,21 +12,22 @@ class ImageDataset(Dataset):
   """
   Dataset for the evaluation of images
   """
-  def __init__(self, data: str, labels: str, delete_segmentation: bool, eval_train_augment_rate: float, img_size: int, target: str, train: bool, live_loading: bool, task: str) -> None:
+  def __init__(self, data: str, labels: str, delete_segmentation: bool, eval_train_augment_rate: float, img_size: int, target: str, train: bool, live_loading: bool, task: str, multi_channel: bool = False) -> None:
     super(ImageDataset, self).__init__()
     self.train = train
     self.eval_train_augment_rate = eval_train_augment_rate
     self.live_loading = live_loading
     self.task = task
+    self.multi_channel = multi_channel
 
     self.data = torch.load(data)
     self.labels = torch.load(labels)
 
     if delete_segmentation:
       for im in self.data:
-        im[0,:,:] = 0
+        im[0,...] = 0
 
-    self.transform_train = grab_hard_eval_image_augmentations(img_size, target)
+    self.transform_train = grab_hard_eval_image_augmentations(img_size, target, multi_channel=multi_channel)
     self.transform_val = transforms.Compose([
       transforms.Resize(size=(img_size,img_size)),
       transforms.Lambda(lambda x : x.float())
@@ -41,6 +42,8 @@ class ImageDataset(Dataset):
     """
     im = self.data[indx]
     if self.live_loading:
+      if self.multi_channel:
+        raise NotImplementedError("Live loading not implemented for multi-channel imaging data")
       im = read_image(im)
       im = im / 255
 

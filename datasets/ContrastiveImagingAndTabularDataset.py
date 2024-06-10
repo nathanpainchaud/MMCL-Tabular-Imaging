@@ -22,7 +22,7 @@ class ContrastiveImagingAndTabularDataset(Dataset):
       self, 
       data_path_imaging: str, delete_segmentation: bool, augmentation: transforms.Compose, augmentation_rate: float, 
       data_path_tabular: str, corruption_rate: float, field_lengths_tabular: str, one_hot_tabular: bool,
-      labels_path: str, img_size: int, live_loading: bool) -> None:
+      labels_path: str, img_size: int, live_loading: bool, multi_channel_imaging: bool = False) -> None:
             
     # Imaging
     self.data_imaging = torch.load(data_path_imaging)
@@ -30,10 +30,11 @@ class ContrastiveImagingAndTabularDataset(Dataset):
     self.delete_segmentation = delete_segmentation
     self.augmentation_rate = augmentation_rate
     self.live_loading = live_loading
+    self.multi_channel_imaging = multi_channel_imaging
 
     if self.delete_segmentation:
       for im in self.data_imaging:
-        im[0,:,:] = 0
+        im[0,...] = 0
 
     self.default_transform = transforms.Compose([
       transforms.Resize(size=(img_size,img_size)),
@@ -111,6 +112,8 @@ class ContrastiveImagingAndTabularDataset(Dataset):
     """
     im = self.data_imaging[index]
     if self.live_loading:
+      if self.multi_channel_imaging:
+        raise NotImplementedError("Live loading not implemented for multi-channel imaging data")
       im = read_image(im)
       im = im / 255
     ims = [self.transform(im)]
