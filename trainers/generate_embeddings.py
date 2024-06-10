@@ -2,12 +2,13 @@ import os
 
 import torch
 from torch.utils.data import DataLoader
-import pytorch_lightning as pl
 
 from datasets.ImageDataset import ImageDataset
 from datasets.TabularDataset import TabularDataset
 from models.TabularEmbeddingModel import TabularEmbeddingModel
 from models.ResnetEmbeddingModel import ResnetEmbeddingModel
+from utils.utils import seed_everything
+
 
 def generate_embeddings(hparams):
   """
@@ -16,7 +17,7 @@ def generate_embeddings(hparams):
   IN
   hparams:      All hyperparameters
   """
-  pl.seed_everything(hparams.seed)
+  seed_everything(hparams)
   if hparams.datatype == 'imaging' or hparams.datatype == 'multimodal':
     train_dataset = ImageDataset(hparams.data_train_eval_imaging, hparams.labels_train_eval_imaging, hparams.delete_segmentation, hparams.eval_train_augment_rate, hparams.img_size, train=False)
     val_dataset = ImageDataset(hparams.data_val_eval_imaging, hparams.labels_val_eval_imaging, hparams.delete_segmentation, hparams.eval_train_augment_rate, hparams.img_size, train=False)

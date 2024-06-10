@@ -2,11 +2,10 @@ import os
 import sys
 
 from torch.utils.data import DataLoader
-import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 
-from utils.utils import grab_image_augmentations, grab_wids, create_logdir
+from utils.utils import grab_image_augmentations, grab_wids, create_logdir, seed_everything
 from utils.ssl_online_custom import SSLOnlineEvaluator
 
 from datasets.ContrastiveImagingAndTabularDataset import ContrastiveImagingAndTabularDataset
@@ -88,7 +87,7 @@ def pretrain(hparams, wandb_logger):
   hparams:      All hyperparameters
   wandb_logger: Instantiated weights and biases logger
   """
-  pl.seed_everything(hparams.seed)
+  seed_everything(hparams)
 
   # Load appropriate dataset
   train_dataset, val_dataset = load_datasets(hparams)

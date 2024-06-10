@@ -1,9 +1,13 @@
 from typing import List, Tuple
 from os.path import join
 import os
+import random
 import sys
 from torch import nn
 
+from hydra.core.hydra_config import HydraConfig
+import numpy as np
+import pytorch_lightning as pl
 import torch
 from torchvision import transforms
 
@@ -15,6 +19,25 @@ def create_logdir(name: str, resume_training: bool, wandb_logger):
     raise Exception(f'Run {run_name} already exists. Please delete the folder {logdir} or choose a different run name.')
   os.makedirs(logdir,exist_ok=True)
   return logdir
+
+def seed_everything(hparams):
+  """
+  Wraps Lightning's `seed_everything` to make it robust to Hydra's multirun, which can cause identical seeds to be used.
+
+  If Hydra is in multirun mode and no seed is specified by the user (meaning we don't want to reproduce a previous
+  experiment and only care about "true" randomness), use the job number as part of the seed to make sure to get a
+  different seed for each job. This is a patch since, for some unidentified reason, some jobs get seeded the same.
+  """
+  if hparams.seed is None and (job_num := HydraConfig.get().job.get("num")):
+    # The seed is generated under the conditions that:
+    # i) it is different for each trial (make sure that even if the same initial seed is returned by `randint`,
+    #    the seed will be different for each job)
+    # ii) it is within the range of values accepted by numpy [np.iinfo(np.uint32).min, np.iinfo(np.uint32).max]
+    s_min, s_max = np.iinfo(np.uint32).min, np.iinfo(np.uint32).max
+    seed = random.randint(s_min, s_max)
+    hparams.seed = ((seed + job_num) % (s_max - s_min)) + s_min
+
+  hparams.seed = pl.seed_everything(seed=hparams.seed)
 
 def grab_image_augmentations(img_size: int, target: str, crop_scale_lower: float = 0.08) -> transforms.Compose:
   """

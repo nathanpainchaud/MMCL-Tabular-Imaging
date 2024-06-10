@@ -1,7 +1,6 @@
 import os 
 
 from torch.utils.data import DataLoader
-import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint, LearningRateMonitor
 from torch.utils.data.sampler import WeightedRandomSampler
@@ -11,7 +10,9 @@ from datasets.TabularDataset import TabularDataset
 from datasets.ImagingAndTabularDataset import ImagingAndTabularDataset
 from models.Evaluator import Evaluator
 from models.Evaluator_regression import Evaluator_Regression
-from utils.utils import grab_arg_from_checkpoint, grab_hard_eval_image_augmentations, grab_wids, create_logdir
+from utils.utils import grab_arg_from_checkpoint, grab_hard_eval_image_augmentations, grab_wids, create_logdir, \
+  seed_everything
+
 
 def load_datasets(hparams):
   if hparams.datatype == 'imaging' or hparams.datatype == 'multimodal':
@@ -46,7 +47,7 @@ def evaluate(hparams, wandb_logger):
   hparams:      All hyperparameters
   wandb_logger: Instantiated weights and biases logger
   """
-  pl.seed_everything(hparams.seed)
+  seed_everything(hparams)
   
   train_dataset, val_dataset = load_datasets(hparams)
   

@@ -1,10 +1,9 @@
 from torch.utils.data import DataLoader
-import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from datasets.ImageDataset import ImageDataset
 from datasets.TabularDataset import TabularDataset
 from models.Evaluator import Evaluator
-from utils.utils import grab_arg_from_checkpoint
+from utils.utils import grab_arg_from_checkpoint, seed_everything
 
 
 def test(hparams, wandb_logger=None):
@@ -14,7 +13,7 @@ def test(hparams, wandb_logger=None):
   IN
   hparams:      All hyperparameters
   """
-  pl.seed_everything(hparams.seed)
+  seed_everything(hparams)
   
   if hparams.datatype == 'imaging' or hparams.datatype == 'multimodal':
     test_dataset = ImageDataset(hparams.data_test_eval_imaging, hparams.labels_test_eval_imaging, hparams.delete_segmentation, 0, grab_arg_from_checkpoint(hparams, 'img_size'), target=hparams.target, train=False, live_loading=hparams.live_loading)

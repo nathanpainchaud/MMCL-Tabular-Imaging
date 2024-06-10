@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 import hydra
 from omegaconf import DictConfig, open_dict, OmegaConf
 import torch
-import pytorch_lightning as pl
 from pytorch_lightning.loggers import WandbLogger
 import wandb
 
@@ -16,7 +15,7 @@ from trainers.pretrain import pretrain
 from trainers.evaluate import evaluate
 from trainers.test import test
 from trainers.generate_embeddings import generate_embeddings
-from utils.utils import grab_arg_from_checkpoint, prepend_paths, re_prepend_paths
+from utils.utils import grab_arg_from_checkpoint, prepend_paths, re_prepend_paths, seed_everything
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 torch.backends.cudnn.deterministic = True
@@ -24,7 +23,7 @@ torch.backends.cudnn.benchmark = False
 
 #@hydra.main(config_path='./configs', config_name='config', version_base=None)
 def run(args: DictConfig):
-  pl.seed_everything(args.seed)
+  seed_everything(args)
   args = prepend_paths(args)
   time.sleep(random.randint(1,5)) # Prevents multiple runs getting the same version when launching many jobs at once
 
