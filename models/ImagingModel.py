@@ -26,6 +26,9 @@ class ImagingModel(nn.Module):
         encoder_name_dict = {'clip' : 'encoder_imaging.', 'remove_fn' : 'encoder_imaging.', 'supcon' : 'encoder_imaging.', 'byol': 'online_network.encoder.', 'simsiam': 'online_network.encoder.', 'swav': 'model.', 'barlowtwins': 'network.encoder.'}
         self.bolt_encoder = True
         self.encoder = torchvision_ssl_encoder(original_args['model'])
+        if args['target'] == 'cardinal':
+          # For CARDINAL data, replace the first layer to accept 4 channels as input
+          self.encoder.conv1 = nn.Conv2d(4, 64, 7, stride=2, padding=3, bias=False)
         self.encoder_name = encoder_name_dict[original_args['loss']]
 
       # Remove prefix and fc layers
@@ -53,9 +56,15 @@ class ImagingModel(nn.Module):
   def create_imaging_model(self, args):
     if args['model'] == 'resnet18':
       model = models.resnet18(pretrained=False, num_classes=100)
+      if args['target'] == 'cardinal':
+        # For CARDINAL data, replace the first layer to accept 4 channels as input
+        model.conv1 = nn.Conv2d(4, 64, 7, stride=2, padding=3, bias=False)
       self.pooled_dim = 512
     elif args['model'] == 'resnet50':
       model = models.resnet50(pretrained=False, num_classes=100)
+      if args['target'] == 'cardinal':
+        # For CARDINAL data, replace the first layer to accept 4 channels as input
+        model.conv1 = nn.Conv2d(4, 64, 7, stride=2, padding=3, bias=False)
       self.pooled_dim = 2048
     else:
       raise Exception('Invalid architecture. Please select either resnet18 or resnet50.')

@@ -1,6 +1,7 @@
 from typing import List, Tuple, Dict, Any
 
 import torch
+from torch import nn
 import pytorch_lightning as pl
 import torchmetrics
 import torchvision
@@ -22,6 +23,8 @@ class Pretraining(pl.LightningModule):
     Selects appropriate resnet encoder
     """
     self.encoder_imaging = torchvision_ssl_encoder(self.hparams.model)
+    if self.hparams.target == 'cardinal':
+      self.encoder_imaging.conv1 = nn.Conv2d(4, 64, 7, stride=2, padding=3, bias=False)
     self.pooled_dim = 2048 if self.hparams.model=='resnet50' else 512
     self.projector_imaging = SimCLRProjectionHead(self.pooled_dim, self.hparams.embedding_dim, self.hparams.projection_dim)
 
